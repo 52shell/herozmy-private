@@ -1,0 +1,549 @@
+socks-port: 7891
+mixed-port: 7890
+redir-port: 7892 
+tproxy-port: 9898
+allow-lan: true
+bind-address: "*"
+mode: rule
+# 自定义 geodata url
+geox-url:
+  geoip: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.metadb"
+
+log-level: info
+ipv6: true
+external-controller: 0.0.0.0:9090
+external-ui: /etc/clash/ui
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+tcp-concurrent: true
+interface-name: eth0
+keep-alive-interval: 15
+routing-mark: 6666
+
+
+
+# 嗅探域名 可选配置
+sniffer:
+  enable: true
+
+  force-domain:
+  - +.v2ex.com
+  - 'google.com'
+  - '*.googlevideo.com'
+  - '*.youtube.com'
+  ## 对嗅探结果进行跳过
+  skip-domain:
+  - 'Mijia Cloud'
+  - 'dlg.io.mi.com'
+  - '+.apple.com'
+   # - '*.baidu.com'   
+  #   - Mijia Cloud
+  # 需要嗅探协议
+  # 已废弃，若 sniffer.sniff 配置则此项无效
+  sniffing:
+  - tls
+  - http
+
+ 
+
+
+
+
+# DNS配置
+dns:
+  enable: false # 关闭将使用系统 DNS
+  prefer-h3: true # 开启 DoH 支持 HTTP/3，将并发尝试
+  # listen: 0.0.0.0:7874 # 开启 DNS 服务器监听
+  ipv6: false 
+  default-nameserver:
+  - 114.114.114.114
+  - 119.29.29.29
+  - 223.5.5.5
+  enhanced-mode: fake-ip # or redir-host
+  fake-ip-range: 198.18.0.1/16 # fake-ip 池设置
+# 配置不使用fake-ip的域名
+  fake-ip-filter:
+  - '*.lan'
+  - localhost.ptlogin2.qq.com
+  - '+.srv.nintendo.net'
+  - '+.stun.playstation.net'
+  - '+.msftconnecttest.com'
+  - '+.msftncsi.com'
+  - '+.xboxlive.com'
+  - 'msftconnecttest.com'
+  - 'xbox.*.microsoft.com'
+  - '*.battlenet.com.cn'
+  - '*.battlenet.com'
+  - '*.blzstatic.cn'
+  - '*.battle.net'
+
+  # DNS主要域名配置
+  # 支持 UDP，TCP，DoT，DoH，DoQ
+  # 这部分为主要 DNS 配置，影响所有直连，确保使用对大陆解析精准的 DNS
+  nameserver:
+  - https://doh.pub/dns-query
+  - https://dns.alidns.com/dns-query
+
+
+
+
+proxies:
+
+proxy-providers:
+  All:
+    health-check:
+      enable: true
+      interval: 600
+      url: http://www.gstatic.com/generate_204
+    interval: 86400
+    path: ./all.yaml
+    type: http
+    url: "https://sub.herozmy.com/sub?target=clash&url=https://qkt83qnp2yuj.subconnect.org/api/v1/client/subscribe?token=306fb53a4301a4984f8293463af92494|https://zhoushuren.top/api/v1/client/subscribe?token=6dc333f79b2100b71afc64bef9bb7372|https://subbs.susuda.sslcdnapp.net/link/DryMBhIygL4NJJXl?sub=3&list=true&udp=true&emoji=true"
+    
+  herozmy:
+    type: http
+    path: ./herozmy.yaml
+    url: https://vps.herozmy.com/s/clashMeta/1341ad87dc634955cabc041da264ad2f
+    interval: 3600
+    health-check:
+      enable: false
+      url: http://www.gstatic.com/generate_204
+      interval: 300
+    
+subscribe-url: https://qkt83qnp2yuj.subconnect.org/api/v1/client/subscribe?token=306fb53a4301a4984f8293463af92494|https://zhoushuren.top/api/v1/client/subscribe?token=6dc333f79b2100b71afc64bef9bb7372|https://subbs.susuda.sslcdnapp.net/link/DryMBhIygL4NJJXl?sub=3
+
+
+
+proxy-groups:
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Rocket.png
+- name:  🚀 手动切换
+  proxies:
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  type: select
+  use:
+  - All
+  - herozmy
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Auto.png
+- name: ♻️ 自动选择
+  interval: 300
+  type: url-test
+  url: "http://www.gstatic.com/generate_204"
+  use:
+  - All
+  - herozmy
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Bypass.png
+- name: 🔯 故障转移
+  interval: 300
+  proxies: []
+  type: fallback
+  url: 'http://www.gstatic.com/generate_204'
+  use:
+  - All
+  - herozmy
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Global.png
+- name: 国外网站
+  proxies:
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  - 韩国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/China_Map.png
+- name: 🎯 全球直连
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/YouTube.png
+- name: 📹 油管视频
+  proxies:
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 狮城节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  - 韩国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/OpenAI.png
+- name: 💬 OpenAi
+  proxies:
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 狮城节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  - 韩国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/bilibili_3.png
+- name: docker
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Netflix.png
+- name: 🎥 奈飞视频
+  proxies:
+  - 狮城节点
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  - 韩国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Orz-3/mini/master/Color/DisneyPlus.png
+- name: Disney+
+  proxies:
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 狮城节点
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 台湾节点
+  - 韩国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Apple.png
+- name: 🍎 苹果服务
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Spotify.png
+- name: Spotify
+  proxies:
+  -  🚀 手动切换
+  - 韩国节点
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 台湾节点
+  - 美国节点
+  - 狮城节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_1.png
+- name: HBO
+  proxies:
+  -  🚀 手动切换
+  - 自建节点
+  - 狮城节点
+  - 香港节点
+  - 韩国节点
+  - 美国节点
+  - 台湾节点
+  - 日本节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Prime_Video_1.png
+- name: AmazonPrimeVideo
+  proxies:
+  -  🚀 手动切换
+  - 自建节点
+  - 狮城节点
+  - 美国节点
+  - 台湾节点
+  - 日本节点
+  - 香港节点
+  - 韩国节点
+  type: select
+##- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Telegram_X.png
+- name: 📲 电报消息
+  proxies:
+  -  🚀 手动切换
+  - 自建节点
+  - 狮城节点
+  - 韩国节点
+  - 香港节点
+  - 日本节点
+  - 台湾节点
+  - 美国节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Microsoft.png
+- name: Ⓜ️ 微软服务
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Netease_Music.png
+- name: 🎶 网易音乐
+  proxies:
+  - DIRECT
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/bilibili_3.png
+- name: 📺 哔哩哔哩
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+  
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Game.png
+- name: 🎮 游戏平台
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png
+- name:  🍃 AdBlock
+  proxies:
+  - REJECT
+  type: select
+#- icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Final.png
+- name: 🐟 漏网之鱼
+  proxies:
+  - DIRECT
+  -  🚀 手动切换
+  - ♻️ 自动选择
+  - 🔯 故障转移
+  - 自建节点
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 台湾节点
+  type: select
+- filter: "(?=.*(港|\U0001F1ED\U0001F1F0|HK|(?i)Hong))^((?!(台|日|韩|新|美)).)*$"
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Hong_Kong.png
+  name: 香港节点
+  type: select
+  use:
+  - All
+- filter: "(?=.*(日|\U0001F1EF\U0001F1F5|JP|(?i)Japan))^((?!(港|台|韩|新|美)).)*$"
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Japan.png
+  name: 日本节点
+  type: select
+  use:
+  - All
+- filter: "(?=.*(台|\U0001F1E8\U0001F1F3|\U0001F1F9\U0001F1FC|TW|(?i)Taiwan))^((?!(港|日|韩|新|美)).)*$"
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Taiwan.png
+  name: 台湾节点
+  type: select
+  use:
+  - All
+- filter: "(?=.*(美|\U0001F1FA\U0001F1F8|US|(?i)States|American))^((?!(港|台|日|韩|新)).)*$"
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
+  name: 美国节点
+  type: select
+  use:
+  - All
+- filter: "^.*herozmy.*$"
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/United_States.png
+  name: 自建节点
+  type: select
+  use:
+  - herozmy
+- filter: 新加坡
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/SG.png
+  name: 狮城节点
+  proxies: []
+  type: select
+  use:
+  - All
+- filter: 韩国
+  icon: https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Korea.png
+  name: 韩国节点
+  proxies: []
+  type: select
+  use:
+  - All
+
+    
+rule-providers:
+  OpenAI:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/OpenAI.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/OpenAI/OpenAI.yaml"
+  Adblock-Domain:
+    behavior: domain
+    interval: 86400
+    path: ./ruleset/AdDomain.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AdvertisingLite/AdvertisingLite_Domain.yaml"
+  AmazonPrimeVideo:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/AmazonPrimeVideo.yaml
+    type: http
+    url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/AmazonPrimeVideo/AmazonPrimeVideo.yaml
+  Apple:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Apple.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Apple/Apple.yaml"
+  BiliBili:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/BiliBili.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/BiliBili/BiliBili.yaml"
+  docker:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Docker.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Docker/Docker.yaml"
+  China:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/China.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China.yaml"
+  Disney:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Disney.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney.yaml"
+  Game:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Game.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Game/Game.yaml"
+  Global:
+    behavior: domain
+    interval: 86400
+    path: ./ruleset/Global-Domain.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/proxy.txt"
+  HBO:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/HBO.yaml
+    type: http
+    url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/HBO/HBO.yaml
+  Lan:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/lan.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Lan/Lan.yaml"
+  Microsoft:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Microsoft.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Microsoft/Microsoft.yaml"
+  NetEaseMusic:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/NetEaseMusic.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/NetEaseMusic/NetEaseMusic.yaml"
+  奈飞视频:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Netflix.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Netflix/Netflix.yaml"
+  PackageName:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/PackageName.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/Infatuation-Fei/rule/main/Clash/Rule/Android_Package_Name_Proxy.yaml"
+  Spotify:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Spotify.yaml
+    type: http
+    url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Spotify/Spotify.yaml
+  电报消息:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/Telegram.yaml
+    type: http
+    url: https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Telegram/Telegram.yaml
+  油管视频:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/YouTube.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml"
+rules:
+#- DOMAIN,api.xmoviebot.com,DIRECT
+# vps自建地址
+- IP-CIDR,185.148.13.37/24,DIRECT 
+- RULE-SET,docker,docker
+- RULE-SET,OpenAI, 💬 OpenAi
+- RULE-SET,AmazonPrimeVideo,AmazonPrimeVideo
+- RULE-SET,HBO,HBO
+- DOMAIN,www.asuswrt-merlin.net, 🚀 手动切换
+- RULE-SET,电报消息, 📲 电报消息
+- RULE-SET,Spotify,Spotify
+- RULE-SET,Adblock-Domain, 🍃 AdBlock
+- RULE-SET,油管视频, 📹 油管视频
+- RULE-SET,奈飞视频, 🎥 奈飞视频
+- RULE-SET,Disney,Disney+
+- RULE-SET,Apple, 🍎 苹果服务
+- RULE-SET,Microsoft, Ⓜ️ 微软服务
+- RULE-SET,NetEaseMusic, 🎶 网易音乐
+- RULE-SET,BiliBili, 📺 哔哩哔哩
+- RULE-SET,Game, 🎮 游戏平台
+- RULE-SET,PackageName,国外网站
+- RULE-SET,Global,国外网站
+- RULE-SET,China, 🎯 全球直连
+- RULE-SET,Lan,DIRECT
+- GEOIP,CN, 🎯 全球直连
+- MATCH, 🐟 漏网之鱼
