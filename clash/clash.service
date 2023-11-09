@@ -1,0 +1,10 @@
+[Unit]
+Description=clash auto run
+ 
+[Service]
+Type=simple
+ 
+ExecStart=/usr/bin/clash -d /etc/clash/
+ 
+[Install]
+WantedBy=default.target
