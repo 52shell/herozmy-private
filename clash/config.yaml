@@ -64,7 +64,7 @@ external-ui: /etc/clash/ui
 
 
 proxies:
-  - {name: herozmy-easytrojan, server: 185.148.13.37, port: 443, client-fingerprint: chrome, type: trojan, password: zxcvbnm, sni: ip621647033.mobgslb.tbcache.com}
+#   - {name: herozmy-easytrojan, server: xxxx, port: 443, client-fingerprint: chrome, type: trojan, password: zxcvbnm, sni: xxxx}
 proxy-providers:
   All:
     health-check:
@@ -74,9 +74,9 @@ proxy-providers:
     interval: 86400
     path: ./all.yaml
     type: http
-    url: "https://sub.herozmy.com/sub?target=clash&url=https://qkt83qnp2yuj.subconnect.org/api/v1/client/subscribe?token=306fb53a4301a4984f8293463af92494|https://zhoushuren.top/api/v1/client/subscribe?token=6dc333f79b2100b71afc64bef9bb7372|https://subbs.susuda.sslcdnapp.net/link/DryMBhIygL4NJJXl?sub=3&list=true&udp=true&emoji=true"
+    url: "https://sub.herozmy.com/sub?target=clash&url=机场订阅链接&list=true&udp=true&emoji=true"
     
-subscribe-url: https://qkt83qnp2yuj.subconnect.org/api/v1/client/subscribe?token=306fb53a4301a4984f8293463af92494|https://zhoushuren.top/api/v1/client/subscribe?token=6dc333f79b2100b71afc64bef9bb7372|https://subbs.susuda.sslcdnapp.net/link/DryMBhIygL4NJJXl?sub=3
+subscribe-url: 机场订阅
 
 
 
@@ -487,9 +487,6 @@ rule-providers:
     type: http
     url: "https://ghproxy.com/https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/YouTube/YouTube.yaml"
 rules:
-#- DOMAIN,api.xmoviebot.com,DIRECT
-# vps自建地址
-- IP-CIDR,185.148.13.37/24,DIRECT 
 - RULE-SET,docker,docker
 - RULE-SET,OpenAI, 💬 OpenAi
 - RULE-SET,AmazonPrimeVideo,AmazonPrimeVideo
