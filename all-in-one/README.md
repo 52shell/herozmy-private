@@ -1,13 +1,12 @@
 ## Ubuntu  nas all in one记录
-开启远程ssh
+### 开启远程ssh
 ``` shell
 sudo apt install openssh-server
 sudo /etc/ssh/sshd.conf改成yes
 sudo systemctl restart ssh
 ```
-
-
-docker安装
+### docker安装
+``` shell
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 sudo systemctl start docker
@@ -15,9 +14,8 @@ sudo systemctl enable docker
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-
-Macvlan配置
+```
+### Macvlan配置
 创建macvlan并互通
 docker network create -d macvlan --subnet=10.10.10.0/24 --gateway=10.10.10.10 -o parent=br0 macvlan
 nmcli con add con-name macvlan-router type macvlan ifname macvlan-router dev br0 mode bridge ip4 10.10.10.2/24 gw4 10.10.10.10
