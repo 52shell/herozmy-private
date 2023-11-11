@@ -17,11 +17,11 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 ```
 ### Macvlan配置
 创建macvlan并互通
+``` shell
 docker network create -d macvlan --subnet=10.10.10.0/24 --gateway=10.10.10.10 -o parent=br0 macvlan
 nmcli con add con-name macvlan-router type macvlan ifname macvlan-router dev br0 mode bridge ip4 10.10.10.2/24 gw4 10.10.10.10
 nmcli con mod macvlan-router ipv4.dns 10.10.10.10
-
-
+```
 docker-compose编写格式:
 
     networks:
