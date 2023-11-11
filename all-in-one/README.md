@@ -1,12 +1,10 @@
-## all in one 记录
-Ubuntu  nas all in one记录
-
-
+## Ubuntu  nas all in one记录
 开启远程ssh
+``` shell
 sudo apt install openssh-server
 sudo /etc/ssh/sshd.conf改成yes
 sudo systemctl restart ssh
-
+```
 
 
 docker安装
