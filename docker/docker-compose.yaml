@@ -1,0 +1,846 @@
+version: "3.3"
+services:
+  #dashdot:
+    #container_name: dashdot
+    #image: mauricenino/dashdot
+    #network_mode: host
+    #restart: unless-stopped
+    #volumes:
+      #- /:/mnt/host:ro
+    # - /etc/os-release:/etc/os-release:ro
+    #  - /proc/1/ns/net:/host_ns_net:ro
+    #  - /mnt/ssd/appdata:/mnt/host_appdata:ro
+    #  - /mnt/disk1:/mnt/host_disk1:ro
+    # environment:
+    # - PASSWORD=xxxxxxxx
+    #privileged: true
+
+  ###code-server
+  codeserver:
+    image: linuxserver/code-server
+    container_name: "code-server"
+    restart: always
+    volumes:
+      - ./code-server:/config
+      - /mnt/ssd:/config/workspace
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - PASSWORD=xxxxxxx
+      - SUDO_PASSWORD=xxxxxxxx.
+      - DEFAULT_WORKSPACE=/work/workspace
+    ports:
+      - 8443:8443
+    network_mode: bridge
+
+  ##  zdir
+  zdir:
+    image: helloz/zdir:latest
+    container_name: zdir
+    network_mode: bridge
+    restart: always
+    volumes:
+      - ./zdir/data:/data/apps/zdir/data
+      - /mnt/ssd/zdir:/data/apps/zdir/data/public
+    ports:
+      - '6080:6080'
+
+  ### sonarr通知
+
+  easy_xarr:
+    image: oscar1011/easy_xarr:notify_only
+    container_name: easy_xarr
+    network_mode: bridge
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./notify/Setting.yml:/app/config/Setting.yml
+
+  #homarr:
+    #container_name: homarr
+    #image: ghcr.io/ajnart/homarr:latest
+    #network_mode: bridge
+    #restart: unless-stopped
+    #volumes:
+      #- ./homarr/configs:/app/data/configs
+      #- ./homarr/icons:/app/public/icons
+      #- /var/run/docker.sock:/var/run/docker.sock:ro
+    #environment:
+      # - PASSWORD=qqwc
+      #- EDIT_MODE_PASSWORD=qqwc
+    #ports:
+      #- '7575:7575'
+      
+      
+  ## frp内网穿透 
+  frpc:
+    network_mode: host
+    container_name: frpc
+    volumes:
+      - ./frpc/frpc.ini:/etc/frp/frpc.toml
+      ###注意crt是映射的证书，如果不需要TLS加密等操作，西面这条请删掉或者用#注释。
+      #- /mnt/frp/crt:/etc/frp/crt 
+    restart: always
+    image: snowdreamtech/frpc
+
+
+### xui搭建服务器ss
+
+
+  xui:
+    image: enwaiax/x-ui:alpha-zh
+    container_name: xui
+    volumes:
+      - ./x-ui/db/:/etc/x-ui/
+      - ./x-ui/cert/:/root/cert/
+    restart: unless-stopped
+    network_mode: host
+    # shadowsocks:
+    #    image: shadowsocks/shadowsocks-libev
+    ##    container_name: ss-server
+    #    ports:
+    #      - "21181:8388/tcp"
+    #     - "21181:8388/udp"
+    #    environment:
+    #     - PASSWORD=1234567890
+    #      - METHOD=aes-256-gcm
+    #     - TIMEOUT=300
+    #   restart: always
+
+
+
+
+    # 反向代理工具
+
+    #npm:
+    #image: 'jc21/nginx-proxy-manager:latest'
+    #container_name: npm
+    #restart: unless-stopped
+    #ports:
+    #- '88:80'
+    #- '81:81'
+    # - '4443:443'
+    #volumes:
+    #- ./nginx-proxy-manager/data:/data
+    #- ./nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+
+
+  traefik:
+    image: traefik:v2.4
+    container_name: traefik
+    restart: always
+    network_mode: bridge
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 87:80
+      - 443:443
+      #- 8008:8080
+    environment:
+      - "ALICLOUD_ACCESS_KEY=xxxxxxxx"
+      - "ALICLOUD_SECRET_KEY=xxxxxxx"
+      #- LEGO_DISABLE_CNAME_SUPPORT=true
+      # 420782,
+      - DNSPOD_API_KEY=xxxx,xxxxxxxxxx
+      #- "ALICLOUD_ACCESS_KEY=xxxxxxxx"
+      #- "ALICLOUD_SECRET_KEY=xxxxxxxxxx"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./traefik/acme.json:/acme.json
+      ## Add folder with dynamic configuration yml
+      - ./traefik/configurations:/configurations
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=bridge"
+      - "traefik.http.routers.traefik-secure.entrypoints=websecure"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.xxxxx.com`)"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.xxxxx.top`)"
+      - "traefik.http.routers.traefik-secure.middlewares=user-auth@file"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
+      - "traefik.http.routers.traefik-secure.middlewares=authelia@file"
+
+  ## ddns动态域名解析
+  # ddns 
+  ddns-go:
+    image: jeessy/ddns-go
+    container_name: ddns-go
+    restart: always
+    ports:
+      - 9876:9876
+    volumes:
+      - ./DDNS-GO:/root
+    network_mode: bridge
+
+  # 密码管理器
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - WEBSOCKET_ENABLED=true
+      - INVITATIONS_ALLOWED=false
+      - SIGNUPS_ALLOWED=false
+    ports:
+      - 2218:80
+    volumes:
+      - ./vaultwarden:/data
+    network_mode: bridge
+    ###  autuelia sso登录
+    #Authelia:
+    #image: authelia/authelia
+    #container_name: "Authelia"
+    #network_mode: host
+    #restart: always
+    #volumes:
+    #- "./Authelia:/config"
+    #depends_on:
+    #- "redis"
+    #- "mariadb"
+
+###
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=Asia/Shanghai
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+
+
+
+    # movie-bot追剧
+  movie-robot:
+    image: yipengfei/movie-robot:beta
+    container_name: movie-robot
+    restart: always
+    network_mode: host
+    environment:
+      - LICENSE_KEY=xndkmdmdndxjnxnd
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./movie-robot:/data
+      - ./movie-robot/start.sh:/app/start.sh
+      - /mnt/disk1:/media
+
+  ### sonarr
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sonarr:/config
+      - /mnt/disk1/media/tv-anime:/anime
+      - /mnt/disk1/downloads/:/downloads
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    network_mode: bridge
+
+  ### overseerr
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./overseerr:/config
+    ports:
+      - 5055:5055
+    restart: unless-stopped
+    network_mode: bridge
+    
+  ###  xarr-rss
+
+  xarr-rss:
+    image: xiaoyi510/xarr-rss:latest
+    container_name: xarr-rss
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./xarr-rss:/app/conf
+    ports:
+      - 8086:8086
+    restart: unless-stopped
+    network_mode: bridge
+
+  # emby
+
+  emby:
+    image: lscr.io/linuxserver/emby:latest
+    container_name: emby
+    network_mode: host
+    #runtime: nvidia
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      #- NVIDIA_VISIBLE_DEVICES=all
+      #- NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - ./emby:/config
+      - /mnt/disk1:/media
+
+  jav-emby:
+    image: lscr.io/linuxserver/emby:latest
+    container_name: jav-emby
+    network_mode: bridge
+    #runtime: nvidia
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      #- NVIDIA_VISIBLE_DEVICES=all
+      #- NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - ./jav-emby:/config
+      - /media/:/media:rslave
+      - /mnt/disk1/jav:/jav
+    ports:
+      - 7096:8096
+
+  #    devices:
+  #     - /dev/dri:/dev/dri
+
+  ### plex
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    #runtime: nvidia
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      #- NVIDIA_VISIBLE_DEVICES=all
+      #- NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - ./plex:/config
+      - /mnt/disk1:/media
+    restart: unless-stopped
+
+  ### reader
+
+  reader:
+    image: hectorqin/reader
+    container_name: reader
+    network_mode: bridge
+    restart: always
+    volumes:
+      - ./reader/log:/log
+      - ./reader/storage:/storage
+    ports:
+      - "8760:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      #- READER_APP_USERLIMIT=50 
+      - READER_APP_USERBOOKLIMIT=6000
+      - READER_APP_CACHECHAPTERCONTENT=true
+      #- READER_APP_REMOTEWEBVIEWAPI=http://readerwebview:8050 #启用webview(若下方readerwebview容器不开启需注释此行
+      # ↓多用户模式配置↓
+      - READER_APP_SECURE=true
+      - READER_APP_SECUREKEY=zxcvbnm
+      - READER_APP_INVITECODE=zmy
+
+  # clouddrive
+  cloudnas:
+    image: cloudnas/clouddrive2-unstable
+    container_name: clouddrive2
+    environment:
+      - TZ=Asia/Shanghai
+      - CLOUDDRIVE_HOME=/Config
+    volumes:
+      - /media/:/CloudNAS:shared
+      - ./clouddrive:/Config
+    devices:
+      - /dev/fuse:/dev/fuse
+    restart: unless-stopped
+    pid: "host"
+    privileged: true
+    network_mode: "host"
+    #ports:
+    #   - 19798:19798
+
+    ### kodbox
+  kodbox:
+    image: rsg2019/kodbox
+    container_name: kodbox
+    network_mode: bridge
+    privileged: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./kodbox:/config
+      - /mnt/disk1:/home
+    ports:
+      - 2046:80
+    restart: unless-stopped
+
+
+
+
+### mysql
+
+  mariadb:
+    image: linuxserver/mariadb
+    container_name: mariadb
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./mysql:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD=xxxddeddd.
+
+
+### redis
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./redis:/data
+
+  ## alist文件挂载工具
+
+  alist:
+    container_name: alist
+    restart: always
+    volumes:
+      - ./alist:/opt/alist/data
+      - /mnt/disk1:/disk1
+    ports:
+      - '5244:5244'
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+    image: 'xhofe/alist:latest'
+    network_mode: bridge
+    
+    
+  # javtube后端部署
+
+  metatube:
+    image: metatube/metatube-server:latest
+    container_name: javtube
+    command: -dsn /config/metatube.db
+    volumes:
+      - ./javtube:/config
+    ports:
+      - "6969:8080"
+    restart: unless-stopped
+    network_mode: bridge
+    
+    
+  # chatpt
+
+  pandora:
+    image: pengzhile/pandora
+    container_name: chatpt
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PANDORA_CLOUD=cloud
+      - PANDORA_SERVER=0.0.0.0:8899
+      - DATABASE_URI=mysql://root:xxxxxc.@10.10.10.139:3306/gpt
+      - PANDORA_TOKENS_FILE=/config/token.txt
+    volumes:
+      - ./gpt:/config
+      - ./gpt/data:/data
+    ports:
+      - "8899:8899"
+    restart: unless-stopped
+    network_mode: bridge
+    
+    
+  ### diun 镜像通知
+
+  diun:
+    image: crazymax/diun:latest
+    container_name: diun
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+      - LOG_LEVEL=info
+      - LOG_JSON=false
+      - DIUN_PROVIDERS_DOCKER=true
+      - DIUN_PROVIDERS_FILE_FILENAME=/custom-images.yml
+    volumes:
+      - ./diun_notify:/data
+      - ./diun_notify/custom-images.yml:/custom-images.yml:ro
+      - ./diun_notify/diun.yml:/diun.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  ### webdav
+  
+  webdav:
+    image: apachewebdav/apachewebdav
+    container_name: webdav
+    restart: always
+    ports:
+      - 8880:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - AUTH_TYPE=Digest
+      - USERNAME=xxxx
+      - PASSWORD=xxxxx
+    network_mode: bridge
+    volumes:
+      #- ./webdav:/var/lib/dav
+      - /mnt/disk1:/var/lib/dav/data/disk1
+      - /mnt/ssd:/var/lib/dav/data/ssd
+
+  ### mtphoto相册
+
+  mtphoto:
+    image: mtphotos/mt-photos:latest
+    container_name: mtphoto
+    restart: always
+    ports:
+      - 8063:8063
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - REDIS_HOST=10.10.10.114
+      - REDIS_PORT=6379
+    network_mode: bridge
+    volumes:
+      #- ./webdav:/var/lib/dav
+      - ./mtphoto:/config
+      - /mnt/disk1/photo/upload:/upload
+      - /mnt/disk1/photo/home:/home
+      ### 微力同步
+      #verysync:
+      #image: jonnyan404/verysync
+      #container_name: verysync
+      #environment:
+      #- PUID=1000
+      #- PGID=1000
+      #- PORT=8886
+      #volumes:
+      #- ./verysync:/data
+      #- /mnt/disk1:/disk1
+      #ports:
+      #- "8886:8886"
+      #- "3000:3000"
+      #- "22037:22037/udp"
+      #- "22027:22027/udp"
+      #- "22330:22330"
+      #restart: always
+
+
+### portainer管理docker
+
+  portainer:
+    image: 6053537/portainer-ce
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer/data:/data
+    network_mode: bridge
+    
+    
+### audiobookshelf
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    network_mode: bridge
+    restart: always
+    ports:
+      - 13378:80
+    volumes:
+      - /mnt/disk1/audio:/audiobooks
+      - /mnt/disk1/book:/podcasts
+      - ./audiobookshelf/config:/config
+      - ./audiobookshelf/metada:/metadata
+
+  ### Iyuu辅种
+
+  IYUUPlus:
+    image: iyuucn/iyuuplus
+    container_name: IYUUPlus
+    network_mode: bridge
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./iyuu:/IYUU/db
+      - /mnt/ssd/appdata/macvlan/qbittorrent-pt/config/qBittorrent/BT_backup:/qb
+      - /mnt/ssd/appdata/macvlan/transmission/torrents:/tr
+      - /mnt/ssd/appdata/macvlan/nt-qbittorrent/config/qBittorrent/BT_backup:/qb2
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+
+  ### moviepilot
+  MoviePilot:
+    image: jxxghp/moviepilot
+    container_name: moviepilot
+    restart: always
+    volumes:
+      - ./moviepilot/config:/config
+      - ./moviepilot/root:/moviepilot
+      - /mnt/ssd/appdata/macvlan/nt-qbittorrent/config/qBittorrent/BT_backup:/qb
+      - /mnt/ssd/appdata/macvlan/transmission/torrents:/tr
+      - /mnt/disk1/:/media
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      #web端口
+      - NGINX_PORT=3000
+      #api端口
+      - PORT=3001
+      - MOVIEPILOT_AUTO_UPDATE=true
+      #账号
+      - SUPERUSER=herozmy
+      #密码
+      - SUPERUSER_PASSWORD=zxcvbnm
+      #api
+      #- API_TOKEN=herozmy
+      #tmdb api地址
+      - TMDB_API_DOMAIN=api.themoviedb.org
+      #下载地址
+      - DOWNLOAD_PATH=/media
+      #下载电影目录
+      - DOWNLOAD_MOVIE_PATH=/media/downloads/
+      #下载tv目录
+      - DOWNLOAD_TV_PATH=/media/downloads/
+      #下载动漫目录
+      - DOWNLOAD_ANIME_PATH=/media/downloads
+      #下载二级开关
+      - DOWNLOAD_CATEGORY=true
+      #下载站点字幕
+      - DOWNLOAD_SUBTITLE=false
+      #入库刷新
+      - REFRESH_MEDIASERVER=true
+      #入库刮削
+      #- DOWNLOAD_SUBTITLE=false
+      - SCRAP_METADATA=true
+      #刮削数据源themoviedb/douban
+      - SCRAP_SOURCE=themoviedb
+      #新增已入库媒体是否跟随TMDB信息变化，true/false，默认true
+      - SCRAP_FOLLOW_TMDB=true
+      #种子标签
+      - TORRENT_TAG=MOVIEPILOT
+      #媒体库目录
+      - LIBRARY_PATH=/media/
+      - LIBRARY_MOVIE_NAME=/media/media/
+      - LIBRARY_TV_NAME=/media/media/
+      - LIBRARY_ANIME_NAME=/media/media/
+      #媒体库二级分类
+      - LIBRARY_CATEGORY=true
+      #转移方式
+      - TRANSFER_TYPE=link
+      #cookiecloud设置
+      - COOKIECLOUD_HOST=https://xxxxxx.xxxxxxx.com
+      - COOKIECLOUD_KEY=xjxnnxnxnxnnc
+      - COOKIECLOUD_PASSWORD=xjxnnxnxnxncnncncjcjsnnd
+      - COOKIECLOUD_INTERVAL=30
+      #ocr
+      - OCR_HOST=http://10.10.10.114:9899
+      #交互下载id
+      #- AUTO_DOWNLOAD_USER=
+      #交互搜索
+      - SUBSCRIBE_SEARCH=false
+      #通知方式
+      - MESSAGER=telegram,wechat
+      - TELEGRAM_TOKEN=xxxxs56:bjdjcncijcncjcjjfcj
+      - TELEGRAM_CHAT_ID=594678697
+      - TELEGRAM_USERS=
+      - TELEGRAM_ADMINS=
+
+      - WECHAT_CORPID=ww5cb76d74bjdjdnjxnd
+      - WECHAT_APP_SECRET=skmdkdkdijdndn-_wRLRe1cnLnaTfEJDs
+      - WECHAT_APP_ID=1000007
+      - WECHAT_TOKEN=jdjdjdjdjd
+      - WECHAT_ENCODING_AESKEY=dkkxkckckkckckckckckc
+      - WECHAT_PROXY=https://qyapi.weixin.qq.com
+      #下载器
+      - DOWNLOADER=qbittorrent
+      - QB_HOST=10.10.10.79:8080
+      - QB_USER=admin
+      - QB_PASSWORD=adminadmin
+      - TR_HOST=10.10.10.111:9091
+      - TR_USER=zmy
+      - TR_PASSWORD=qqwc
+      
+
+      #媒体软件
+      - MEDIASERVER=emby
+      #- PLEX_HOST=http://10.10.10.114:32400/
+      #- PLEX_TOKEN=xtWXderVFUFRshCMzVeq
+      - EMBY_HOST=10.10.10.114:8096
+      - EMBY_API_KEY=5549e99cde6a4c3bb090b8fd21b40f8d
+      - MEDIASERVER_SYNC_INTERVAL=6
+      #认证
+      - AUTH_SITE=audiences
+      - AUDIENCES_UID=12692
+      - AUDIENCES_PASSKEY=301cdfed6229c6ef48586b508f491e9f
+      #大内存模式
+      - BIG_MEMORY_MODE=false
+    ports:
+      - 3000:3000
+      - 3001:3001
+    network_mode: bridge
+
+
+
+###
+
+  OCR:
+    image: jxxghp/moviepilot-ocr
+    container_name: "ocr"
+    network_mode: bridge
+    ports:
+      - 9899:9899    
+    restart: always
+    
+### cookiecloud
+
+  cookiecloud:
+    image: easychen/cookiecloud:latest
+    container_name: cookiecloud
+    restart: always
+    network_mode: bridge
+    volumes:
+      - ./cookiecloud/data:/data/api/data
+    ports:
+      - 8088:8088
+      
+  nas-tools:
+    image: hsuyelin/nas-tools:latest
+    ports:
+      - 3002:3000        
+      # 默认的webui控制端口
+    volumes:
+      - ./nastools/config:/config   
+      # 冒号左边请修改为你想保存配置的路径
+      - /mnt/disk1/:/media   # 媒体目录，多个目录需要分别映射进来，需要满足配置文件说明中的要求
+    environment: 
+      - PUID=1000    
+      # 想切换为哪个用户来运行程序，该用户的uid
+      - PGID=1000    
+      # 想切换为哪个用户来运行程序，该用户的gid
+      - UMASK=022
+      # 掩码权限，默认000，可以考虑设置为022
+      - NASTOOL_AUTO_UPDATE=false  
+      # 如需在启动容器时自动升级程程序请设置为true
+      - NASTOOL_CN_UPDATE=false 
+      # 如果开启了容器启动自动升级程序，并且网络不太友好时，可以设置为true，会使用国内源进行软件更新
+     #- REPO_URL=https://ghproxy.com/https://github.com/hsuyelin/nas-tools.git  # 当你访问github网络很差时，可以考虑解释本行注释
+    restart: always
+    network_mode: bridge
+    hostname: nas-tools
+    container_name: nas-tools
+      
+ ### 字幕下载
+
+  chinesesubfinder:
+    image: allanpk716/chinesesubfinder:latest
+    volumes:
+      - ./ChineseSubFinder/config:/config
+        # 冒号左边请修改为你想在主机上保存配置、日志等文件的路径
+      - /mnt/disk1:/media
+          # 请修改为你的媒体目录，冒号右边可以改成你方便记忆的目录，多个媒体目录需要分别映射进来
+      - ./ChineseSubFinder/browser:/root/.cache/rod/browser
+          # 容器重启后无需再次下载 chrome，除非 go-rod 更新
+    environment:
+      - PUID=1000
+      # uid
+      - PGID=1000
+      # gid
+      - PERMS=true
+      # 是否重设/media权限
+      - TZ=Asia/Shanghai  
+      # 时区
+      - UMASK=022
+      # 权限掩码
+    restart: always
+    network_mode: bridge
+    hostname: chinesesubfinder
+    container_name: chinesesubfinder
+    ports:
+      - 19035:19035
+      # 从0.20.0版本开始，通过webui来设置
+      - 19037:19037
+      # webui 的视频列表读取图片用，务必设置不要暴露到外网
+    logging:
+        driver: "json-file"
+        options:
+          max-size: "100m"
+          # 限制docker控制台日志大小，可自行调整
+          
+          
+  subconverter:
+    image: stilleshan/sub
+    container_name: sub
+    ports:
+      - 18080:80
+      - 25500:25500
+    volumes:
+      - ./sub/conf:/usr/share/nginx/html/conf
+      #- ./sub/base:/base/
+    restart: always
+
+  myurls:
+    image: stilleshan/myurls:latest
+    container_name: myurls
+    environment:
+      - MYURLS_DOMAIN=s.herozmy.com
+      - MYURLS_TTL=365
+    volumes:
+      - ./myurls/logs:/app/logs    
+    ports:
+      - "8002:8002"
+    depends_on:
+      - redis
+    restart: always
+          
+          
+  #mosdns部署
+  # mosdns:
+  #  image: 601096721/mosdns:latest
+  # container_name: mosdns
+  #  restart: always
+  #  network_mode: "host"
+  #  ports:
+  #    - 53:53/tcp
+  #    - 53:53/udp
+  #  volumes:
+  #   - ./mosdns:/etc/mosdns
