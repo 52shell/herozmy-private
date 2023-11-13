@@ -23,7 +23,7 @@ nmcli con add con-name macvlan-router type macvlan ifname macvlan-router dev br0
 nmcli con mod macvlan-router ipv4.dns 10.10.10.10
 ```
 docker-compose编写格式:
-
+``` yaml
     networks:
       macvlan:
          ipv4_address: 10.10.10.98
@@ -33,21 +33,18 @@ docker-compose编写格式:
 networks:   macvlan:     external: true
     name: macvlan
 
-
+```
 
 kvm安装
-
+``` shell
 sudo apt update
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager
-
 sudo adduser herozmy libvirt
 sudo adduser herozmy libvirt-qemu
-
 sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
+```
 
-
-sudo apt install virt-manager
 network:
   version: 2
   renderer: networkd
