@@ -831,8 +831,16 @@ services:
     depends_on:
       - redis
     restart: always
-          
-          
+
+###music
+  music:
+    image: azraias/qq_flac_music_downloader:latest
+    container_name: music
+    volumes:
+      - "/mnt/disk1/music:/workspace/music"
+    restart: always
+    ports:
+      - "8999:8899"
   #mosdns部署
   # mosdns:
   #  image: 601096721/mosdns:latest
