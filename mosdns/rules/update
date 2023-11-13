@@ -1,0 +1,11 @@
+#!/bin/bash
+# Powered by Apad.pro
+# https://apad.pro/easymosdns
+#
+# Notes: EasyMosDNS for CentOS/RedHat 7+
+#
+mosdns_working_dir="/etc/mosdns"
+mkdir -p /tmp/easymosdns &&
+curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt > /tmp/easymosdns/china_domain_list.txt &&
+curl https://ghproxy.com/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt > /tmp/easymosdns/cdn_domain_list.txt &&
+\cp -rf /tmp/easymosdns/*.txt $mosdns_working_dir/rules && rm -rf /tmp/easymosdns/* && echo 'update successful'

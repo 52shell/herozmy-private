@@ -1,0 +1,4 @@
+github.com
+linkedin.com
+full:bing.com
+full:www.bing.com
