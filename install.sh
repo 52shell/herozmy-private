@@ -43,7 +43,7 @@ echo "ip转发创建完成"
 
 echo "开始创建 systemd 服务"
 
-sudo tee /etc/systemd/system/clash.service > /dev/null <<EOF
+tee /etc/systemd/system/clash.service > /dev/null <<EOF
 [Unit]
 Description=clash auto run
  
