@@ -60,4 +60,10 @@ EOF
 
 echo "systemd 服务创建完成"
 
+
+echo "设置clash开机自启动"
+
+systemctl daemon-reload
+systemctl start clash.service
+systemctl enable clash.service
 echo "所有操作完成"
