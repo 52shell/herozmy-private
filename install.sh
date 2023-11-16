@@ -29,41 +29,25 @@ echo "开始下载 clash meta"
 echo 
 wget -o ${host}/${version}/${clash}.gz  >/dev/null 2>&1
 sleep 1
-echo "clash meta 下载完成"
-
 echo "开始解压"
 gunzip ${clash}.gz >/dev/null 2>&1
-echo "解压完成"
-
 echo "开始重命名"
 mv ${clash} clash >/dev/null 2>&1
-echo "重命名完成"
-
 echo "开始添加执行权限"
 chmod u+x clash >/dev/null 2>&1
-echo "执行权限添加完成"
-
-echo "开始复制 clash 到 /usr/bin"
+echo "复制 clash 到 /usr/bin"
 cp clash /usr/bin >/dev/null 2>&1
-echo "复制完成"
-
-echo "开始创建 /etc/clash 目录"
+echo "创建 /etc/clash 目录"
 mkdir /etc/clash >/dev/null 2>&1
-echo "/etc/clash 目录创建完成"
-
 echo "开始下载 webui"
 cd /etc/clash >/dev/null 2>&1
 wget $ui
-echo "webui 下载完成"
-
 echo "开始解压 webui"
 tar -zxvf compressed-dist.tgz
 echo "webui 解压完成"
-
 echo "开始重命名 yacd"
 mv public ui
 echo "yacd 重命名完成"
-
 echo "创建ip转发"
 echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
 echo 'net.ipv6.conf.all.forwarding = 1'>>/etc/sysctl.conf
