@@ -1,0 +1,5 @@
+payload:
+# 私人维护规则
+#openai
+  - DOMAIN-SUFFIX,oaistatic.com
+  - DOMAIN-SUFFIX,oaiusercontent.com
