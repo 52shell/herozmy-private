@@ -2,8 +2,11 @@
 ### 开启远程ssh
 ``` shell
 sudo apt install openssh-server
-sudo /etc/ssh/sshd.conf改成yes
-sudo systemctl restart ssh
+sudo nano /etc/ssh/sshd.conf
+# PermitRootLogin yes
+reboot
+或者：
+sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 ```
 ### docker安装
 ``` shell
