@@ -1,7 +1,6 @@
 
 #!/bin/bash
-
-    herozmy-Logo='
+herozmy-Logo='
 ==========================================================================
                                                                          
                Herozmy-自用脚本                      
@@ -11,7 +10,7 @@
                                 by herozmy 2023-08-27                     
 ==========================================================================';
 
-	finishlogo='
+finishlogo='
 ==========================================================================
                                                                          
              Herozmy-脚本运行完成                      
@@ -27,7 +26,9 @@ ui="https://github.com/MetaCubeX/metacubexd/releases/download/v1.129.0/compresse
 
 
 echo "开始下载 clash meta"
+echo 
 wget -o ${host}/${version}/${clash}.gz  >/dev/null 2>&1
+sleep 1
 echo "clash meta 下载完成"
 
 echo "开始解压"
