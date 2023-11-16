@@ -1,31 +1,58 @@
+
 #!/bin/bash
+
+    herozmy-Logo='
+==========================================================================
+                                                                         
+               Herozmy-自用脚本                      
+                  Powered by www.herozmy.com 2023                          
+                      All Rights Reserved                                
+                                                                         
+                                by herozmy 2023-08-27                     
+==========================================================================';
+
+	finishlogo='
+==========================================================================
+                                                                         
+             Herozmy-脚本运行完成                      
+                  Powered by www.herozmy.com 2023                          
+                      All Rights Reserved                                
+                                                                         
+                                by Herozmy                  
+==========================================================================';
+host="https://github.com/MetaCubeX/Clash.Meta/releases/download";
+version="v1.16.0";
+clash="clash.meta-linux-amd64-v1.16.0";
+ui="https://github.com/MetaCubeX/metacubexd/releases/download/v1.129.0/compressed-dist.tgz";
+
+
 echo "开始下载 clash meta"
-wget https://github.com/MetaCubeX/Clash.Meta/releases/download/v1.16.0/clash.meta-linux-amd64-v1.16.0.gz
+wget -o ${host}/${version}/${clash}.gz  >/dev/null 2>&1
 echo "clash meta 下载完成"
 
 echo "开始解压"
-gunzip clash.meta-linux-amd64-v1.16.0.gz
+gunzip ${clash}.gz >/dev/null 2>&1
 echo "解压完成"
 
 echo "开始重命名"
-mv clash.meta-linux-amd64-v1.16.0 clash
+mv ${clash} clash >/dev/null 2>&1
 echo "重命名完成"
 
 echo "开始添加执行权限"
-chmod u+x clash
+chmod u+x clash >/dev/null 2>&1
 echo "执行权限添加完成"
 
 echo "开始复制 clash 到 /usr/bin"
-cp clash /usr/bin
+cp clash /usr/bin >/dev/null 2>&1
 echo "复制完成"
 
 echo "开始创建 /etc/clash 目录"
-mkdir /etc/clash
+mkdir /etc/clash >/dev/null 2>&1
 echo "/etc/clash 目录创建完成"
 
 echo "开始下载 webui"
-cd /etc/clash
-wget https://github.com/MetaCubeX/metacubexd/releases/download/v1.129.0/compressed-dist.tgz
+cd /etc/clash >/dev/null 2>&1
+wget $ui
 echo "webui 下载完成"
 
 echo "开始解压 webui"
