@@ -372,6 +372,21 @@ proxy-groups:
 
     
 rule-providers:
+# 自行维护代理地址
+  private-fly:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/private-fly.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/52shell/herozmy-private/main/clash/ruleset/private-fly.yaml"
+# 自行维护直连地址
+  private-direct:
+    behavior: classical
+    interval: 86400
+    path: ./ruleset/private-direct.yaml
+    type: http
+    url: "https://ghproxy.com/https://raw.githubusercontent.com/52shell/herozmy-private/main/clash/ruleset/private-direct.yaml"
+# openai
   OpenAI:
     behavior: classical
     interval: 86400
