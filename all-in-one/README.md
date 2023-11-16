@@ -30,7 +30,9 @@ docker-compose编写格式:
     dns:
       - 114.114.114.114
 
-networks:   macvlan:     external: true
+networks:
+  macvlan:
+    external: true
     name: macvlan
 
 ```
@@ -44,7 +46,7 @@ sudo adduser herozmy libvirt-qemu
 sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 ```
-
+``` 
 network:
   version: 2
   renderer: networkd
@@ -61,14 +63,14 @@ network:
           via: 10.10.10.10
       nameservers:
         addresses: [10.10.10.10]
+``` 
 
 
-
-
+``` 
 sudo netplan apply
+``` 
 
-
-
+``` 
 . /etc/os-release
 sudo apt install -t ${VERSION_CODENAME}-backports cockpit
 
@@ -86,8 +88,8 @@ sudo apt install cockpit-file-sharing
 文件管理:
 wget https://github.com/45Drives/cockpit-navigator/releases/download/v0.5.10/cockpit-navigator_0.5.10-1focal_all.deb
 apt install ./cockpit-navigator_0.5.10-1focal_all.deb
-
-
+``` 
+``` 
 nmcli con add con-name macvlan-router type macvlan ifname macvlan-router dev br0 mode bridge ip4 10.10.10.2/24 gw4 10.10.10.10
 nmcli con mod macvlan-router ipv4.dns 10.10.10.10
 docker network create -d macvlan --subnet=10.10.10.0/24 --gateway=10.10.10.10 -o parent=br0 macvlan
@@ -102,22 +104,24 @@ networks:
   macvlan:   
     external: true
     name: macvlan
-
+``` 
 N卡
+``` 
 sudo add-apt-repository ppa:graphics-drivers/ppa
 
 sudo apt-get update
 
 sudo apt-get install nvidia-driver-
 
-
+``` 
 ```sudo apt update```
 如果未安装snapd软件包，运行以下命令：
 ```sudo apt install snapd```
 安装snapd后，可以使用snap命令安装LXC。运行以下命令以安装LXD snap软件包：
 ```sudo snap install lxd```
-lxd init
 
+lxd init
+``` 
 * Would you like to use LXD clustering? (yes/no) [default=no]:
 * Do you want to configure a new storage pool? (yes/no) [default=yes]:
 * Name of the new storage pool [default=default]: lxd
@@ -129,16 +133,18 @@ lxd init
 * Would you like the LXD server to be available over the network? (yes/no) [default=no]:
 * Would you like stale cached images to be updated automatically? (yes/no) [default=yes]:
 * Would you like a YAML “lxd init” preseed to be printed? (yes/no) [default=no]:
-
+```
+``` 
 sudo apt-get install iptables-persistent 
 sudo nano /etc/iptables/rules.v4
-
+```
+``` 
 *filter
 :DOCKER-USER - [0:0]
 -I DOCKER-USER -i br0 -o br0 -j ACCEPT
 COMMIT
 
-
+``` 
 
 
 
