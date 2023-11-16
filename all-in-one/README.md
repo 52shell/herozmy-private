@@ -46,7 +46,7 @@ sudo adduser herozmy libvirt-qemu
 sudo systemctl enable libvirtd
 sudo systemctl start libvirtd
 ```
-``` 
+``` yaml
 network:
   version: 2
   renderer: networkd
@@ -66,11 +66,11 @@ network:
 ``` 
 
 
-``` 
+``` shell
 sudo netplan apply
 ``` 
 
-``` 
+``` shell
 . /etc/os-release
 sudo apt install -t ${VERSION_CODENAME}-backports cockpit
 
@@ -106,7 +106,7 @@ networks:
     name: macvlan
 ``` 
 N卡
-``` 
+``` shell
 sudo add-apt-repository ppa:graphics-drivers/ppa
 
 sudo apt-get update
@@ -161,7 +161,7 @@ COMMIT
 
 
 
-
+``` 
 sudo apt-get update
 sudo apt-get install -y cockpit
 
@@ -184,9 +184,12 @@ network:
           via: 10.10.10.10
       nameservers:
         addresses: [10.10.10.10]
-
-执行:sudo netplan apply
-
+``` 
+执行:
+``` 
+sudo netplan apply
+```
+``` 
 qemu编译安装
 apt install build-essential pkg-config zlib1g-dev libglib2.0-dev libpixman-1-dev flex bison make ninja-build
 下载:wget https://download.qemu.org/qemu-8.0.0.tar.xz
@@ -238,6 +241,7 @@ nano /etc/libvirt/qemu.conf
 #user = "libvirt-qemu"
 #group = "libvirt"
 重启systemctl restart libvirtd查看是否启动
+```
 
 apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
 usermod -aG libvirt $USER
