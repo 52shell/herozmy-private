@@ -1,5 +1,6 @@
 ## ros
-
+ddns
+```
 #更新ALIDDNS脚本精简版#    
 #定义更新的域名#    
 :global ddns1 "ros.xxx.top"    
@@ -14,3 +15,4 @@
 :local result ($results->"data")  
 :log warning $result  
 }  
+```
