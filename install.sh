@@ -37,13 +37,15 @@ mv public ui
 echo "yacd 重命名完成"
 
 echo "创建ip转发"
-echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.conf
-echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.conf
+echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
+echo 'net.ipv6.conf.all.forwarding = 1'>>/etc/sysctl.conf
+#echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.conf
+#echo 'net.ipv6.conf.all.forwarding = 1' | tee -a /etc/sysctl.conf
 echo "ip转发创建完成"
 
 echo "开始创建 systemd 服务"
 
-tee /etc/systemd/system/clash.service > /dev/null <<EOF
+cat << EOF > /etc/systemd/system/clash.service
 [Unit]
 Description=clash auto run
  
