@@ -37,15 +37,12 @@ echo "复制 clash 到 /usr/bin"
 cp clash /usr/bin >/dev/null 2>&1
 echo "创建 /etc/clash 目录"
 mkdir /etc/clash >/dev/null 2>&1
-echo "开始下载 webui"
-cd /etc/clash >/dev/null 2>&1
-wget $ui
-echo "开始解压 webui"
-tar -zxvf compressed-dist.tgz
-echo "webui 解压完成"
-echo "开始重命名 yacd"
-mv public ui
-echo "yacd 重命名完成"
+cd /etc/clash
+git init 
+git remote add -f origin https://github.com/52shell/herozmy-private.git
+git config core.sparsecheckout true
+echo 'clash' >> .git/info/sparse-checkout
+git pull origin main
 echo "创建ip转发"
 echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
 echo 'net.ipv6.conf.all.forwarding = 1'>>/etc/sysctl.conf
