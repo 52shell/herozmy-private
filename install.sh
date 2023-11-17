@@ -37,7 +37,7 @@ echo "复制 clash 到 /usr/bin"
 cp clash /usr/bin >/dev/null 2>&1
 echo "创建 /etc/clash 目录"
 mkdir /etc/clash >/dev/null 2>&1
-cd /etc/clash
+cd /etc/
 git init 
 git remote add -f origin https://github.com/52shell/herozmy-private.git
 git config core.sparsecheckout true
