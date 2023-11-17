@@ -15,7 +15,7 @@ echo "
 
 
      温馨提示：
-         本脚本仅在lxc debian10/11环境下安装，其他环境未测试，仅为自己所用 
+         本脚本仅在lxc debian10/11环境下安装，其他环境未测试，仅为自己所用 
          本脚本仅适用于学习与研究等个人用途,请勿用于任何违法国家法律的活动！
 
 ==================================================================
@@ -38,26 +38,26 @@ host="https://github.com/MetaCubeX/Clash.Meta/releases/download";
 version="v1.16.0";
 clash="clash.meta-linux-amd64-v1.16.0";
 echo "自定义设置（以下设置可直接回车使用默认值）"
- echo -n "输入clash webui端口（默认9090）：" 
- read uiport 
- if [[ -z $uiport ]] 
- then 
- echo  "已设置ui端口：9090" 
- uiport=9090 
- else 
+ echo -n "输入clash webui端口（默认9090）：" 
+ read uiport 
+ if [[ -z $uiport ]] 
+ then 
+ echo  "已设置ui端口：9090" 
+ uiport=9090 
+ else 
  echo "已设置ui端口：$uiport"
- fi 
- echo -n "输入订阅连接：" 
+ fi 
+ echo -n "输入订阅连接：" 
  read suburl
- if [[ -z $suburl ]] 
- then 
- echo  "已设置订阅连接地址" 
+ if [[ -z $suburl ]] 
+ then 
+ echo  "已设置订阅连接地址" 
  suburl=https://
- else 
- echo "已设置订阅连接地址：$suburl" 
- fi 
+ else 
+ echo "已设置订阅连接地址：$suburl" 
+ fi 
 echo "开始下载 clash meta"
-echo 
+echo 
 wget ${host}/${version}/${clash}.gz
 sleep 1
 echo "开始解压"
@@ -76,7 +76,7 @@ echo "创建 /etc/clash 目录"
 mkdir /etc/clash >/dev/null 2>&1
 cd /etc/clash
 sleep 1
-git init 
+git init 
 git remote add -f origin https://github.com/52shell/herozmy-private.git
 git config core.sparsecheckout true
 echo 'clash' >> .git/info/sparse-checkout
@@ -91,12 +91,12 @@ echo "开始创建 systemd 服务"
 cat << EOF > /etc/systemd/system/clash.service
 [Unit]
 Description=clash auto run
- 
+ 
 [Service]
 Type=simple
- 
+ 
 ExecStart=/usr/bin/clash -d /etc/clash/clash
- 
+ 
 [Install]
 WantedBy=default.target
 EOF
@@ -113,16 +113,17 @@ return 1
 Install_firewall()
 {
 sleep 1
+
 echo "创建ip转发"
 echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
 echo 'net.ipv6.conf.all.forwarding = 1'>>/etc/sysctl.conf
 echo "ip转发创建完成"
 sleep 1
-
+echo 'DNSStubListener=no'>>/etc/systemd/resolved.conf
 echo "开始配置iptables"
 echo "安装iptables-persistent"
 sleep 1
-apt-get install -y iptables-persistent 
+apt-get install -y iptables-persistent 
 iptables -t nat -N clash
 iptables -t nat -A clash -d 0.0.0.0/8 -j RETURN
 iptables -t nat -A clash -d 10.0.0.0/8 -j RETURN
@@ -137,8 +138,25 @@ iptables -t nat -A PREROUTING -p tcp -j clash
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
 sleep 1
 iptables-save  > /etc/iptables/rules.v4
+sleep 1
 echo "防火墙转发规则设置完成"
-
+Install_complete
+sleep 1
 return 1
+}
+
+Install_complete()
+{
+clear
+echo "
+lxc clash旁路由安装完成
+-----------------------------------
+clash webui地址:http://ip:"$uiport"/ui
+-----------------------------------
+echo "系统即将重启"
+sleep 3
+reboot
+" 
+
 }
 main
