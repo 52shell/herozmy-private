@@ -1,4 +1,7 @@
 #!/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+
+
 function update() {
 apt install git wget nano curl -y
 
