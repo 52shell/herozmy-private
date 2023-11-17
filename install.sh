@@ -118,7 +118,11 @@ echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
 echo 'net.ipv6.conf.all.forwarding = 1'>>/etc/sysctl.conf
 echo "ip转发创建完成"
 sleep 1
+
 echo "开始配置iptables"
+echo "安装iptables-persistent"
+sleep 1
+apt-get install -y iptables-persistent 
 iptables -t nat -N clash
 iptables -t nat -A clash -d 0.0.0.0/8 -j RETURN
 iptables -t nat -A clash -d 10.0.0.0/8 -j RETURN
@@ -131,10 +135,6 @@ iptables -t nat -A clash -d 240.0.0.0/4 -j RETURN
 iptables -t nat -A clash -p tcp -j REDIRECT --to-port 7892
 iptables -t nat -A PREROUTING -p tcp -j clash
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
-echo "安装iptables-persistent"
-sleep 1
-apt-get install -y iptables-persistent 
-iptables-save > /etc/iptables/rules.v4
 echo "防火墙转发规则设置完成"
 
 return 1
