@@ -1,4 +1,11 @@
 #!/bin/bash
+function update() {
+apt install git wget nano curl -y
+
+
+
+return 1
+}
 function install() {
 host="https://github.com/MetaCubeX/Clash.Meta/releases/download";
 version="v1.16.0";
