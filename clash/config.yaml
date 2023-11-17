@@ -74,7 +74,7 @@ proxy-providers:
     interval: 86400
     path: ./all.yaml
     type: http
-    url: "https://sub.herozmy.com/sub?target=clash&url=机场订阅链接&list=true&udp=true&emoji=true"
+    url: "https://sub.herozmy.com/sub?target=clash&url=机场订阅&list=true&udp=true&emoji=true"
     
 subscribe-url: 机场订阅
 
