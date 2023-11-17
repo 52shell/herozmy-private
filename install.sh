@@ -24,7 +24,7 @@ echo "自定义设置（以下设置可直接回车使用默认值）"
  fi 
 echo "开始下载 clash meta"
 echo 
-wget -o ${host}/${version}/${clash}.gz  >/dev/null 2>&1
+wget ${host}/${version}/${clash}.gz
 sleep 1
 echo "开始解压"
 gunzip ${clash}.gz >/dev/null 2>&1
@@ -44,8 +44,8 @@ echo 'clash' >> .git/info/sparse-checkout
 git pull origin main
 cd /etc/clash/clash
 sed -i "s|^external-controller: :.*|external-controller: :$uiport|" /etc/clash/clash/config.yaml
-sed -i "s|^subscribe-url: :.*|subscribe-url: :$suburl|" /etc/clash/clash/config.yaml
-
+sed -i "s|^subscribe-url:.*|subscribe-url: $suburl|" /etc/clash/clash/config.yaml
+sed -i "s|url=机场订阅|url=$suburl|" /etc/clash/clash/config.yaml
 
 echo "创建ip转发"
 echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
