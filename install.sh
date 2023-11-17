@@ -135,6 +135,8 @@ iptables -t nat -A clash -d 240.0.0.0/4 -j RETURN
 iptables -t nat -A clash -p tcp -j REDIRECT --to-port 7892
 iptables -t nat -A PREROUTING -p tcp -j clash
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
+sleep 1
+iptables-save  > /etc/iptables/rules.v4
 echo "防火墙转发规则设置完成"
 
 return 1
