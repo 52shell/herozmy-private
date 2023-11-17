@@ -86,7 +86,6 @@ proxy-groups:
   proxies:
   - ♻️ 自动选择
   - 🔯 故障转移
-  - herozmy-easytrojan
   type: select
   use:
   - All
