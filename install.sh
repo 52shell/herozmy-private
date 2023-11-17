@@ -134,7 +134,7 @@ iptables -A INPUT -p udp --dport 53 -j ACCEPT
 echo "安装iptables-persistent"
 sleep 1
 apt-get install -y iptables-persistent 
-iptables-save  > /etc/iptables/rules.v4 >/dev/null 2>&1
+iptables-save  > /etc/iptables/rules.v4
 echo "防火墙转发规则设置完成"
 
 return 1
