@@ -25,6 +25,8 @@ echo "
 read
 sleep 1
 apt update && apt -y upgrade
+echo "安装必要软件包"
+apt install -y iptables nano wget curl git
 install
 }
 
