@@ -81,4 +81,6 @@ echo "systemd 服务创建完成"
 return 1
 }
 
+
+update
 install
