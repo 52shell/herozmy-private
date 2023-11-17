@@ -26,7 +26,7 @@ dns:
   default-nameserver:
   - 119.29.29.29
   - 223.5.5.5
-  enable: false
+  enable: true
   enhanced-mode: fake-ip
   fake-ip-filter:
   - '*.lan'
@@ -44,7 +44,7 @@ dns:
   - '*.battle.net'
   fake-ip-range: 198.18.0.1/16
   ipv6: false
-  #listen: 0.0.0.0:7874
+  listen: 0.0.0.0:53
   nameserver:
   - https://doh.pub/dns-query
   - https://dns.alidns.com/dns-query
