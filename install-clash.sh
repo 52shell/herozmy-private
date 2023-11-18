@@ -140,7 +140,7 @@ install_firewall() {
     echo "开始配置iptables"
     echo "安装iptables-persistent"
     sleep 1
-    apt-get install -y iptables-persistent 
+    apt install -y iptables-persistent
     iptables -t nat -N clash
     iptables -t nat -A clash -d 0.0.0.0/8 -j RETURN
     iptables -t nat -A clash -d 10.0.0.0/8 -j RETURN
