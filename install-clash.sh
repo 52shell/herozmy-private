@@ -84,10 +84,9 @@ configure_clash() {
     mkdir /etc/clash >/dev/null 2>&1
     cd /etc/clash
     git_init_and_pull
-    cd /etc/clash/clash
-    sed -i "s|^external-controller: :.*|external-controller: :$uiport|" config.yaml
-    sed -i "s|^subscribe-url:.*|subscribe-url: $suburl|" config.yaml
-    sed -i "s|url=机场订阅|url=$suburl|" config.yaml
+    sed -i "s|^external-controller: :.*|external-controller: :$uiport|" /etc/clash/clash/config.yaml
+    sed -i "s|^subscribe-url:.*|subscribe-url: $suburl|" /etc/clash/clash/config.yaml
+    sed -i "s|url=机场订阅|url=$suburl|" /etc/clash/clash/config.yaml
 }
 
 # 初始化并拉取 git 仓库
@@ -163,7 +162,7 @@ install_firewall() {
 
 # 安装完成
 install_complete() {
-    clear
+   # clear
     echo "lxc clash旁路由安装完成"
     echo "-----------------------------------"
     echo "clash webui地址:http://ip:$uiport/ui"
