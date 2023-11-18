@@ -109,7 +109,7 @@ Description=clash auto run
 [Service]
 Type=simple
  
-ExecStart=/usr/bin/clash -d /etc/clash/
+ExecStart=/usr/bin/clash -d /etc/clash/clash
  
 [Install]
 WantedBy=default.target
