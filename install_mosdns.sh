@@ -58,7 +58,7 @@ customize_settings() {
     echo -e "\n自定义设置（以下设置可直接回车使用默认值）"
     read -p "输入mosdns端口（默认53）：" uiport
     uiport="${uiport:-53}"
-    echo -e "已设置ui端口：\e[36m$uiport\e[0m"
+    echo -e "已设置mosdns端口：\e[36m$uiport\e[0m"
 
     if [[ "$uiport" == "53" ]]; then
         modify_dns_stub_listener
