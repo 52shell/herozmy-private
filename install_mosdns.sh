@@ -89,7 +89,8 @@ configure_mosdns() {
     git clone https://github.com/pmkol/easymosdns.git
     mv ./easymosdns ./mosdns >/dev/null 2>&1
     echo "配置mosdns"
-    sed -i "s|^addr: .*|addr: \"0.0.0.0:$uiport\"|" /etc/mosdns/config.yaml
+    sed -i "s|addr: \"0.0.0.0:53\"|addr: \"0.0.0.0:$uiport\"|g" /etc/mosdns/config.yaml
+
 }
 
 # 修改 DNSStubListener
