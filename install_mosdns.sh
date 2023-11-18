@@ -17,17 +17,9 @@ home() {
     echo -e "==================================================================\n"
     read -p "回车Enter继续~" -r
     sleep 1
-    set_timezone || exit 1
     apt_update_upgrade || exit 1
     install_dependencies || exit 1
     install || exit 1
-}
-
-# 设置时区
-set_timezone() {
-    echo -e "\n设置时区为Asia/Shanghai"
-    timedatectl set-timezone Asia/Shanghai || { echo -e "\e[31m时区设置失败！退出脚本\e[0m"; exit 1; }
-    echo -e "\e[32m时区设置成功\e[0m"
 }
 
 # 更新系统并升级
@@ -61,6 +53,10 @@ customize_settings() {
     read -p "输入mosdns端口（默认53）：" uiport
     uiport="${uiport:-53}"
     echo -e "已设置ui端口：\e[36m$uiport\e[0m"
+
+    if [[ "$uiport" == "53" ]]; then
+        modify_dns_stub_listener
+    fi
 }
 
 # 下载 mosdns
@@ -87,7 +83,14 @@ configure_mosdns() {
     git clone https://github.com/pmkol/easymosdns.git
     mv ./easymosdns ./mosdns >/dev/null 2>&1
     echo "配置mosdns"
-    echo -e "ui-port: ${uiport}\ntimezone: Asia/Shanghai" >> /etc/mosdns/config.yaml
+    sed -i "s|^addr: .*|addr: \"0.0.0.0:$uiport\"|" /etc/mosdns/config.yaml
+}
+
+# 修改 DNSStubListener
+modify_dns_stub_listener() {
+    echo "UI端口设置为53，关闭DNSStubListener"
+    sed -i '/^#*DNSStubListener/s/#*DNSStubListener=yes/DNSStubListener=no/' /etc/systemd/resolved.conf
+    systemctl restart systemd-resolved.service
 }
 
 # 开机自启动 服务
@@ -101,10 +104,11 @@ enable_autostart() {
 # 安装完成
 install_complete() {
     clear
-    echo -e "\nlxc mosdns安装完成"
+    echo -e "\nlxc mosdns旁路由安装完成"
+    echo -e "-----------------------------------"
+    echo -e "mosdns webui地址:http://ip:\e[36m$uiport\e[0m/ui"
     echo -e "-----------------------------------"
     echo -e "系统即将重启"
-    echo -e "-----------------------------------"
     sleep 3
     reboot
 }
