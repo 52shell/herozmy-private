@@ -105,12 +105,12 @@ create_systemd_service() {
     cat << EOF > /etc/systemd/system/clash.service
 [Unit]
 Description=clash auto run
- 
+ 
 [Service]
 Type=simple
- 
-ExecStart=/usr/bin/clash -d /etc/clash/clash
- 
+ 
+ExecStart=/usr/bin/clash -d /etc/clash/
+ 
 [Install]
 WantedBy=default.target
 EOF
