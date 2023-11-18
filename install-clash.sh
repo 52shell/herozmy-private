@@ -91,11 +91,12 @@ configure_clash() {
 
 # 初始化并拉取 git 仓库
 git_init_and_pull() {
-    git init 
-    git remote add -f origin https://github.com/52shell/herozmy-private.git
-    git config core.sparsecheckout true
-    echo 'clash' >> .git/info/sparse-checkout
-    git pull origin main
+git init
+git remote add -f origin https://github.com/52shell/herozmy-private.git
+git config core.sparsecheckout true
+echo 'clash' >> .git/info/sparse-checkout
+git pull origin main
+
 }
 
 # 创建 systemd 服务
