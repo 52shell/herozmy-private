@@ -102,17 +102,7 @@ git pull origin main
 # 创建 systemd 服务
 create_systemd_service() {
     echo "开始创建 systemd 服务"
-    cat << EOF > /etc/systemd/system/clash.service
-[Unit]
-Description=clash auto run
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/clash -d /etc/clash/clash
-
-[Install]
-WantedBy=default.target
-    EOF
+    mv /etc/clash/clash/clash.service /etc/systemd/system/
     echo "systemd 服务创建完成"
     systemctl daemon-reload
 }
