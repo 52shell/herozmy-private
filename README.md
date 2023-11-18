@@ -7,5 +7,5 @@ wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install-clas
 ```
 ``` shell
 # linux mosdns一键安装脚本
-wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install-mosdns.sh && bash install-mosdns.sh
+wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install_mosdns.sh && bash install_mosdns.sh
 ```
