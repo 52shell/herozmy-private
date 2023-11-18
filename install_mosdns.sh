@@ -35,10 +35,16 @@ install_dependencies() {
     apt-get install curl wget git cron unzip nano -y || { echo -e "\e[31m安装失败！退出脚本\e[0m"; exit 1; }
 }
 
+set_timezone() {
+    echo -e "\n设置时区为Asia/Shanghai"
+    timedatectl set-timezone Asia/Shanghai || { echo -e "\e[31m时区设置失败！退出脚本\e[0m"; exit 1; }
+    echo -e "\e[32m时区设置成功\e[0m"
+}
+
 # 安装 mosdns
 install() {
     local mosdns_host="https://github.com/IrineSistiana/mosdns/releases/download/v4.5.3/mosdns-linux-amd64.zip"
-    
+    set_timezone  || exit 1
     customize_settings || exit 1
     download_mosdns || exit 1
     extract_and_install_mosdns || exit 1
@@ -106,7 +112,6 @@ install_complete() {
     clear
     echo -e "\nlxc mosdns旁路由安装完成"
     echo -e "-----------------------------------"
-    echo -e "mosdns webui地址:http://ip:\e[36m$uiport\e[0m/ui"
     echo -e "-----------------------------------"
     echo -e "系统即将重启"
     sleep 3
