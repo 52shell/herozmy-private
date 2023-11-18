@@ -3,5 +3,9 @@
 
 ``` shell
 # linux clash旁路由一键安装脚本
-wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install.sh && bash install.sh
+wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install-clash.sh && bash install-clash.sh
+```
+``` shell
+# linux mosdns一键安装脚本
+wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install-mosdns.sh && bash install-mosdns.sh
 ```
