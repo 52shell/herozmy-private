@@ -3,9 +3,9 @@
 
 ``` shell
 # 二合一脚本
-
 wget https://raw.githubusercontent.com/52shell/herozmy-private/main/all.sh && bash all.sh
-
+```
+```shell
 # linux clash旁路由一键安装脚本
 wget https://raw.githubusercontent.com/52shell/herozmy-private/main/install-clash.sh && bash install-clash.sh
 ```
