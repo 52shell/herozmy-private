@@ -84,7 +84,7 @@ clash_customize_settings() {
     if [[ "$clashport" == "53" ]]; then
         modify_dns_stub_listener
     fi
-}
+
 
     read -p "输入订阅连接：" suburl
     suburl="${suburl:-https://}"
