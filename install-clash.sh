@@ -35,9 +35,9 @@ install_dependencies() {
 
 # 安装 Clash Meta
 install() {
-    host="https://github.com/MetaCubeX/Clash.Meta/releases/download"
-    version="v1.16.0"
-    clash="clash.meta-linux-amd64-v1.16.0"
+    host="https://github.com/MetaCubeX/mihomo/releases/download"
+    version="v1.18.0"
+    clash="mihomo-linux-amd64-v1.18.0"
 
     customize_settings
     download_clash_meta
