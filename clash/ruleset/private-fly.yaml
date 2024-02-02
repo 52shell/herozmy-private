@@ -3,3 +3,8 @@ payload:
 #openai
   - DOMAIN-SUFFIX,oaistatic.com
   - DOMAIN-SUFFIX,oaiusercontent.com
+# PT站点
+  - DOMAIN-SUFFIX,hdsky.me
+  - DOMAIN-SUFFIX,totheglory.im
+  - DOMAIN-SUFFIX,hdchina.org
+  - DOMAIN-SUFFIX,audiences.me
