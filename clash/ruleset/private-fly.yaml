@@ -1,8 +1,5 @@
 payload:
 # 私人维护规则
-#openai
-  - DOMAIN-SUFFIX,oaistatic.com
-  - DOMAIN-SUFFIX,oaiusercontent.com
 # PT站点
   - DOMAIN-SUFFIX,hdsky.me
   - DOMAIN-SUFFIX,totheglory.im
