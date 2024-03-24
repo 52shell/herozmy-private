@@ -37,7 +37,9 @@ addgroup -S www && adduser -S www -G www
 chown -R www:www /data/wwwroot/default/
 
 #下载xdir
-wget -O /tmp/xdir.zip https://github.com/52shell/herozmy-private/releases/download/v1.4.0-xdir/xdir.zip
+wget -O /tmp/xdir.zip https://github.com/52shell/herozmy-private/releases/download/v1.4.0-xdir-up/Xdir.zip
+unzip -o /tmp/xdir.zip -d /root/
+cp -r /root/Xdir/* /data/wwwroot/default/
 
 #替换路径
 #sed -i "s%\"thedir.*%\"thedir\"=>'/data/wwwroot/default',%g" zdir/config.php
