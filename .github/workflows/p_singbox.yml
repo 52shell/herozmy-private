@@ -178,7 +178,7 @@ jobs:
             mv -f ./tmp/linux-${archs}/sing-box ./tmp/sing-box
             chmod +x ./tmp/sing-box
             tar --no-same-owner -czf ./tmp/sing-box-linux-${archs}.tar.gz -C ./tmp/ ./sing-box
-          done
+          
 
       - name: Move files
         run: |
