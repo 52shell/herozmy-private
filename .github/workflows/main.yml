@@ -202,6 +202,7 @@ jobs:
           cd ./sing-box-puernya/ || exit 1
           for file in $(ls); do
             curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/sing-box-puernya/${file}"
+            done
   push_to_release:
     needs: push_prerelease
     runs-on: ubuntu-latest
@@ -234,4 +235,4 @@ jobs:
           git push origin latest --force-with-lease
         working-directory: ./sing-box-puernya
 
-          done
+          
