@@ -178,7 +178,8 @@ jobs:
           for((i=0;i<9;i++));do
             mv -f ./tmp/linux-${archs[i]}/sing-box ./tmp/sing-box
             chmod +x ./tmp/sing-box
-            tar --no-same-owner -czf ./tmp/sing-box-linux-${new_name[i]}.tar.gz -C ./tmp/ ./sing-box
+            zip -r ./tmp/sing-box-linux-${new_name[i]}.zip ./tmp/sing-box
+
           done
 
       - name: Move files
