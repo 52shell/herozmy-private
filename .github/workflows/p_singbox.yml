@@ -175,7 +175,7 @@ jobs:
         run: |
           archs=(amd64 amd64-v3 armv5 armv6 armv7 arm64 mips-softfloat mipsle-hardfloat mipsle-softfloat)
 
-            mv -f ./tmp/linux-${archs[i]}/sing-box ./tmp/sing-box
+            mv -f ./tmp/linux-${archs}/sing-box ./tmp/sing-box
             chmod +x ./tmp/sing-box
             tar --no-same-owner -czf ./tmp/sing-box-linux-${archs}.tar.gz -C ./tmp/ ./sing-box
           done
